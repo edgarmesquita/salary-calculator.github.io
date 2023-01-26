@@ -1,0 +1,36 @@
+[
+  {
+    "name": "Pagamento subsídio de alimentação",
+    "isExempt": true,
+    "unit": "d",
+    "items": [
+      {
+        "id": 1,
+        "name": "Em dinheiro",
+        "value": 5.2
+      },
+      {
+        "id": 2,
+        "name": "Em vale ou cartão refeição",
+        "value": 8.32
+      }
+    ]
+  },
+  {
+    "name": "Estadias nacionais",
+    "isExempt": true,
+    "unit": "d",
+    "items": [
+      {
+        "id": 3,
+        "name": "Trabalhadores em geral em funções públicas",
+        "value": 50.2
+      },
+      {
+        "id": 4,
+        "name": "Administradores, gerentes, membros do Governo e quadros superiores",
+        "value": 69.19
+      }
+    ]
+  }
+]
