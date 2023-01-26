@@ -36,7 +36,7 @@ interface State {
 const allowances = getAllowances();
 const totalDays = 22;
 const ss = 0.11;
-const corpSs = 0.2375;
+const corpSs = 0.1275;
 const status = [
   { id: 1, name: "Não casado", married: false, holders: 1 },
   { id: 2, name: "Casado único titular", married: true, holders: 1 },
