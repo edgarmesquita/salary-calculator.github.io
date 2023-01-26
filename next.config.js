@@ -3,6 +3,7 @@ const nextConfig = {
   experimental: {
     appDir: true,
   },
+  assetPrefix: './',
 }
 
 module.exports = nextConfig
