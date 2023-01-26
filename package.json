@@ -6,7 +6,7 @@
     "build": "next build && next export -o build",
     "start": "next start",
     "lint": "next lint",
-    "deploy": "echo salary-calculator.equantic.tech > ./build/CNAME && gh-pages -b main -d build"
+    "deploy": "gh-pages -b main -d build -t true"
   },
   "dependencies": {
     "@emotion/react": "^11.10.5",
