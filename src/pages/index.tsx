@@ -15,6 +15,8 @@ import { getEchelon, getIrsDeductionAmount, getScale } from '@/funcs/irs';
 import { formatCurrency } from '@/funcs';
 import { getAllowanceGroup, getAllowanceItem, getAllowances, getUnitDescription } from '@/funcs/allowance';
 import CloseIcon from '@mui/icons-material/Close';
+import SettingsIcon from '@mui/icons-material/Settings';
+
 interface StateAllowanceItem {
   id: number; quantity: number, value: number
 }
@@ -211,12 +213,14 @@ export default function HomePage() {
   return (
     <>
       <AppBar position="fixed">
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Calculadora de Salário
-          </Typography>
-          <Button color="inherit" onClick={toggleDrawer(true)}>Opções</Button>
-        </Toolbar>
+        <Container maxWidth="md">
+          <Toolbar disableGutters>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              Calculadora de Salário
+            </Typography>
+            <Button color="inherit" onClick={toggleDrawer(true)} endIcon={<SettingsIcon />}>Opções</Button>
+          </Toolbar>
+        </Container>
       </AppBar>
       <Toolbar />
 
