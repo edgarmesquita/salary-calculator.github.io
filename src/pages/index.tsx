@@ -1,9 +1,10 @@
 "use client"
 import CurrencyFormat from '@/components/CurrencyFormat';
 import {
+  Alert,
   AppBar,
   Box, Button, Card, Checkbox, Container, Dialog, DialogActions, DialogContent,
-  DialogTitle, Divider, FormControl, FormControlLabel, FormGroup, IconButton, InputAdornment, ListSubheader, MenuItem, Select,
+  DialogTitle, Divider, FormControl, FormControlLabel, FormGroup, IconButton, InputAdornment, Link, ListSubheader, MenuItem, Select,
   SelectChangeEvent, Stack, SwipeableDrawer, Switch, Tab, Tabs, TextField, Toolbar, Tooltip, Typography
 } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2';
@@ -12,13 +13,18 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import HelpIcon from '@mui/icons-material/Help';
 import AddIcon from '@mui/icons-material/Add';
 import { getEchelon, getIrsDeductionAmount, getScale } from '@/funcs/irs';
-import { formatCurrency } from '@/funcs';
+import { formatCurrency, generateRandomIntegerInRange } from '@/funcs';
 import { getAllowanceGroup, getAllowanceItem, getAllowances, getUnitDescription } from '@/funcs/allowance';
 import CloseIcon from '@mui/icons-material/Close';
 import SettingsIcon from '@mui/icons-material/Settings';
+import { Allowance, AllowanceItem } from '@/models/allowance';
 
 interface StateAllowanceItem {
-  id: number; quantity: number, value: number
+  id: number;
+  name: string;
+  quantity: number;
+  value: number;
+  unit: "h" | "d" | "m"
 }
 interface State {
   baseSalary: number;
@@ -33,6 +39,11 @@ interface State {
   vacationTwelfthsPercent: 50 | 100;
   christmasTwelfthsPercent: 50 | 100;
   profit: number;
+
+  customAllowanceName: string;
+  customAllowanceValue: number;
+  customAllowanceQuantity?: number | null;
+  customAllowanceUnit: "h" | "d" | "m";
 }
 
 interface TabPanelProps {
@@ -64,7 +75,15 @@ function a11yProps(index: number) {
   };
 }
 
-const allowances = getAllowances();
+const getDefaultQuantityByUnit = (unit: 'h' | 'd' | 'm') => {
+  switch (unit) {
+    case 'h': return 8;
+    case 'd': return 22;
+    default: return null;
+  }
+}
+
+const baseAllowances = getAllowances();
 const totalDays = 22;
 const ss = 0.11;
 const corpSs = 0.1275;
@@ -75,14 +94,23 @@ const status = [
 ];
 
 export default function HomePage() {
+  const [allowances, setAllowances] = React.useState<Allowance[]>(baseAllowances);
+  const foodAllowanceGroup = getAllowanceGroup(2);
   const foodAllowanceItem = getAllowanceItem(2);
+
   const [values, setValues] = React.useState<State>({
     baseSalary: 1000,
     dependents: 0,
     handicapped: false,
     allowanceId: 0,
     allowances: foodAllowanceItem ? [
-      { id: foodAllowanceItem.id, quantity: totalDays, value: foodAllowanceItem.value }
+      {
+        id: foodAllowanceItem.id,
+        name: foodAllowanceGroup?.name + ' - ' + foodAllowanceItem?.name,
+        quantity: totalDays,
+        value: foodAllowanceItem.value,
+        unit: foodAllowanceGroup.unit
+      }
     ] : [],
     statusId: 0,
     hasRnh: false,
@@ -90,7 +118,11 @@ export default function HomePage() {
     hasChristmasTwelfths: false,
     vacationTwelfthsPercent: 100,
     christmasTwelfthsPercent: 100,
-    profit: 25
+    profit: 25,
+
+    customAllowanceName: '',
+    customAllowanceValue: 0,
+    customAllowanceUnit: 'm'
   });
   const [open, setOpen] = React.useState(false);
   const [tab, setTab] = React.useState(0);
@@ -119,8 +151,11 @@ export default function HomePage() {
   const handleAllowanceItemChange = (index: number, prop: keyof StateAllowanceItem, parse: (value: string) => number) => (event: React.ChangeEvent<HTMLInputElement>) => {
     const allowances = [...values.allowances];
     let value = parse(event.target.value);
-    if (value < 0) value = 0;
-    allowances[index][prop] = value;
+
+    if (value < 0)
+      value = 0;
+
+    allowances[index][prop] = value as never;
     setValue("allowances", allowances);
   };
 
@@ -130,18 +165,48 @@ export default function HomePage() {
     setValue("allowances", allowances);
   }
 
-  const handleSelectChange = (prop: keyof State) => (event: SelectChangeEvent<number>) => {
-    setValue(prop, parseInt(event.target.value.toString()));
+  const handleSelectChange = (prop: keyof State, isNumber: boolean) => (event: SelectChangeEvent<number>) => {
+    const value = event.target.value.toString();
+    setValue(prop, isNumber ? parseInt(value) : value);
   }
 
   const handleAllowanceAddClick = (event: React.MouseEvent) => {
-    if (!values.allowanceId) return;
-    const allowanceItem = getAllowanceItem(values.allowanceId);
-    if (!allowanceItem) return;
-    const allowance = { id: allowanceItem.id, quantity: totalDays, value: allowanceItem.value };
+    if (values.allowanceId === null || values.allowanceId === undefined || values.allowanceId === 0)
+      return;
+
+    let allowance: StateAllowanceItem | null = null;
+    if (values.allowanceId === -1) {
+      allowance = {
+        id: generateRandomIntegerInRange(100, 99999),
+        name: values.customAllowanceName,
+        quantity: values.customAllowanceQuantity || 1,
+        value: values.customAllowanceValue,
+        unit: values.customAllowanceUnit
+      }
+    }
+    else {
+      const allowanceGroup = getAllowanceGroup(values.allowanceId);
+      const allowanceItem = getAllowanceItem(values.allowanceId);
+      if (!allowanceItem)
+        return;
+
+      allowance = {
+        id: allowanceItem.id,
+        name: allowanceGroup.name + ' - ' + allowanceItem.name,
+        quantity: totalDays,
+        value: allowanceItem.value,
+        unit: allowanceGroup.unit
+      };
+    }
+
+
     setValues({
       ...values,
       allowanceId: 0,
+      customAllowanceName: '',
+      customAllowanceUnit: 'm',
+      customAllowanceQuantity: null,
+      customAllowanceValue: 0,
       allowances: [...values.allowances, allowance],
     });
     setOpen(false);
@@ -300,6 +365,7 @@ export default function HomePage() {
         </Box>
       </SwipeableDrawer>
       <Container maxWidth="md" sx={{ pt: 3 }}>
+        <Alert severity="warning">Atenção! O cálculo do IRS está a basear-se na nova <Link href="https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/tabela_ret_doclib/Documents/Tabelas_RF_Continente_2_Semestre_2023_Portal.xlsx" target="_blank">Tabela de Junho de 2023</Link>.</Alert>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs value={tab} onChange={handleTabChange} aria-label="tipos de contratos">
             <Tab label="Contrato" {...a11yProps(0)} />
@@ -332,7 +398,7 @@ export default function HomePage() {
                     value={values.statusId}
                     defaultValue={values.statusId}
                     id="statusId"
-                    onChange={handleSelectChange("statusId")}>
+                    onChange={handleSelectChange("statusId", true)}>
                     <MenuItem disabled value={0}>
                       <em>Selecione estado civil...</em>
                     </MenuItem>
@@ -373,8 +439,6 @@ export default function HomePage() {
           </Stack>
 
           {values.allowances.map((o, i) => {
-            const allowanceGroup = getAllowanceGroup(o.id);
-            const allowanceItem = getAllowanceItem(o.id);
             let quantity = isNaN(o.quantity) || o.quantity < 0 ? 0 : o.quantity;
             if (quantity.toString().length > 3)
               quantity = parseInt(quantity.toString().substring(0, 3));
@@ -386,7 +450,7 @@ export default function HomePage() {
                 <Grid container spacing={2}>
                   <Grid xs={12} sm={7}>
                     <TextField
-                      label={allowanceGroup?.name + ' - ' + allowanceItem?.name}
+                      label={o.name}
                       value={value}
                       onChange={handleAllowanceItemChange(i, 'value', parseFloat)}
                       name={`allowances[${i}].value`}
@@ -400,16 +464,19 @@ export default function HomePage() {
                     />
                   </Grid>
                   <Grid xs={4} sm={2}>
-                    <TextField
-                      label={getUnitDescription(allowanceGroup?.unit)}
-                      value={quantity}
-                      onChange={handleAllowanceItemChange(i, 'quantity', parseInt)}
-                      name={`allowances[${i}].quantity`}
-                      id={`allowances_${i}_quantity`}
-                      variant="outlined"
-                      type="number"
-                      fullWidth
-                    />
+                    {o.unit !== 'm' && (
+                      <TextField
+                        label={getUnitDescription(o.unit)}
+                        value={quantity}
+                        onChange={handleAllowanceItemChange(i, 'quantity', parseInt)}
+                        name={`allowances[${i}].quantity`}
+                        id={`allowances_${i}_quantity`}
+                        variant="outlined"
+                        type="number"
+                        fullWidth
+                      />
+                    )}
+
                   </Grid>
                   <Grid xs={8} sm={3} textAlign="right" sx={{ pt: 2, position: 'relative' }}>
 
@@ -440,7 +507,7 @@ export default function HomePage() {
                       value={values.vacationTwelfthsPercent}
                       defaultValue={values.vacationTwelfthsPercent}
                       id="vacationTwelfthsPercent"
-                      onChange={handleSelectChange("vacationTwelfthsPercent")}>
+                      onChange={handleSelectChange("vacationTwelfthsPercent", true)}>
                       <MenuItem value={50}>50%</MenuItem>
                       <MenuItem value={100}>100%</MenuItem>
                     </Select>
@@ -467,7 +534,7 @@ export default function HomePage() {
                       value={values.christmasTwelfthsPercent}
                       defaultValue={values.christmasTwelfthsPercent}
                       id="christmasTwelfthsPercent"
-                      onChange={handleSelectChange("christmasTwelfthsPercent")}>
+                      onChange={handleSelectChange("christmasTwelfthsPercent", true)}>
                       <MenuItem value={50}>50%</MenuItem>
                       <MenuItem value={100}>100%</MenuItem>
                     </Select>
@@ -716,26 +783,91 @@ export default function HomePage() {
         <Dialog disableEscapeKeyDown open={open} onClose={handleClose} maxWidth="sm" fullWidth>
           <DialogTitle>Ajuda de Custo</DialogTitle>
           <DialogContent>
-            <Box component="form" sx={{ display: 'flex', flexWrap: 'wrap' }}>
+            <Box component="form">
               <FormControl variant="outlined" fullWidth>
                 <Select displayEmpty
                   value={values.allowanceId}
                   defaultValue={values.allowanceId}
                   id="allowanceId"
-                  onChange={handleSelectChange("allowanceId")}>
+                  onChange={handleSelectChange("allowanceId", true)}>
                   <MenuItem disabled value={0}>
                     <em>Selecione a ajuda de custo...</em>
                   </MenuItem>
-                  {allowances.map(a =>
+                  {baseAllowances.map(a =>
 
-                    [(<ListSubheader key={a.name}>{a.name}</ListSubheader>),
-                    a.items.map(item => (
-                      <MenuItem key={item.id} value={item.id} disabled={values.allowances.findIndex(o => o.id === item.id) >= 0}>{item.name}</MenuItem>
-                    ))] as ReactNode
-
+                    [
+                      (<ListSubheader key={a.name}>{a.name}</ListSubheader>),
+                      a.items.map(item => (
+                        <MenuItem key={item.id} value={item.id} disabled={values.allowances.findIndex(o => o.id === item.id) >= 0}>{item.name}</MenuItem>
+                      ))
+                    ] as ReactNode
                   )}
+                  <ListSubheader key={"outros"}>Outros</ListSubheader>
+                  <MenuItem value={-1}>Ajuda de custo customizado</MenuItem>
                 </Select>
               </FormControl>
+
+              {values.allowanceId === -1 && (
+                <>
+                  <TextField sx={{ mt: 2 }}
+                    label="Descrição"
+                    value={values.customAllowanceName}
+                    onChange={handleChange("customAllowanceName")}
+                    name="customAllowanceName"
+                    id="customAllowanceName"
+                    variant="outlined"
+                    fullWidth
+                  />
+                  <Grid container spacing={2} sx={{ mt: 2 }}>
+                    <Grid xs={5}>
+                      <TextField
+                        label="Valor"
+                        value={values.customAllowanceValue}
+                        onChange={handleNumberChange("customAllowanceValue", parseFloat)}
+                        name="customAllowanceValue"
+                        id="customAllowanceValue"
+                        InputProps={{
+                          inputComponent: CurrencyFormat as any,
+                        }}
+                        variant="outlined"
+                        fullWidth
+                      />
+                    </Grid>
+                    {values.customAllowanceUnit !== 'm' && (
+                      <Grid xs={4}>
+                        <TextField
+                          label="Quantidade"
+                          value={values.customAllowanceQuantity || getDefaultQuantityByUnit(values.customAllowanceUnit)}
+                          onChange={handleNumberChange("customAllowanceQuantity", parseInt)}
+                          name="customAllowanceQuantity"
+                          id="customAllowanceQuantity"
+                          variant="outlined"
+                          type="number"
+                          fullWidth
+                        />
+                      </Grid>
+                    )}
+
+                    <Grid xs={values.customAllowanceUnit !== 'm' ? 3 : 7}>
+                      <FormControl variant="outlined" fullWidth>
+                        <Select displayEmpty
+                          value={values.customAllowanceUnit as any}
+                          defaultValue={values.customAllowanceUnit as any}
+                          id="customAllowanceUnit"
+                          onChange={handleSelectChange("customAllowanceUnit", false)}>
+                          <MenuItem disabled value={''}>
+                            <em>Unidade...</em>
+                          </MenuItem>
+                          <MenuItem value={"h"}>Horas</MenuItem>
+                          <MenuItem value={"d"}>Dias</MenuItem>
+                          <MenuItem value={"m"}>Por Mês</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                  </Grid>
+                </>
+              )}
+
             </Box>
           </DialogContent>
           <DialogActions>
