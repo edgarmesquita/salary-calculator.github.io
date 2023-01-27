@@ -244,18 +244,26 @@ export default function HomePage() {
         setDrawer(open);
       };
 
-  const getTotalNet = () => {
+  const getTotalGross = (includeAllowances: boolean = false) => {
     let salary = baseSalary;
     if (values.hasVacationTwelfths)
       salary += (baseSalary * (values.vacationTwelfthsPercent / 100)) / 12;
     if (values.hasChristmasTwelfths)
       salary += (baseSalary * (values.christmasTwelfthsPercent / 100)) / 12;
-
-    return salary - (salary * ss) - (salary * (irs ?? 0)) + allowanceSum;
+    return salary + (includeAllowances ? getTotalAllowance() : 0);
+  }
+  const getTotalNet = () => {
+    const salary = getTotalGross();
+    return salary - getTotalDiscounts(salary) + allowanceSum;
   }
 
   const getTotalAllowance = () => {
     return values.allowances.map(o => o.value * (isNaN(o.quantity) ? 0 : o.quantity)).reduce((a, b) => a + b, 0);
+  }
+
+  const getTotalDiscounts = (salary?: number) => {
+    salary ??= getTotalGross();
+    return (salary * ss) + (salary * (irs ?? 0));
   }
 
   const getTotalCompany = () => {
@@ -437,64 +445,81 @@ export default function HomePage() {
               <AddIcon />{" "}Ajuda de Custo
             </Button>
           </Stack>
+          <Card sx={{ p: 1, mb: 2 }}>
+            {values.allowances.map((o, i) => {
+              let quantity = isNaN(o.quantity) || o.quantity < 0 ? 0 : o.quantity;
+              if (quantity.toString().length > 3)
+                quantity = parseInt(quantity.toString().substring(0, 3));
+              let value = isNaN(o.value) || o.value < 0 ? 0 : o.value;
+              if (Math.round(value).toString().length > 9)
+                value = parseFloat(Math.round(value).toString().substring(0, 9));
 
-          {values.allowances.map((o, i) => {
-            let quantity = isNaN(o.quantity) || o.quantity < 0 ? 0 : o.quantity;
-            if (quantity.toString().length > 3)
-              quantity = parseInt(quantity.toString().substring(0, 3));
-            let value = isNaN(o.value) || o.value < 0 ? 0 : o.value;
-            if (Math.round(value).toString().length > 9)
-              value = parseFloat(Math.round(value).toString().substring(0, 9));
-            return (
-              <Card key={o.id} sx={{ p: 1, mb: 2 }}>
-                <Grid container spacing={2}>
-                  <Grid xs={12} sm={7}>
-                    <TextField
-                      label={o.name}
-                      value={value}
-                      onChange={handleAllowanceItemChange(i, 'value', parseFloat)}
-                      name={`allowances[${i}].value`}
-                      id={`allowances_${i}_value`}
-                      InputProps={{
-                        inputComponent: CurrencyFormat as any,
-                      }}
-                      variant="outlined"
-                      fullWidth
+              return (
+                <React.Fragment key={o.id}>
 
-                    />
-                  </Grid>
-                  <Grid xs={4} sm={2}>
-                    {o.unit !== 'm' && (
+                  <Grid container spacing={2}>
+                    <Grid xs={12}>
+                      <Stack direction={"row"} alignItems="flex-start">
+                        <Typography variant="caption" sx={{ display: 'flex', flexGrow: 1 }}>{o.name}</Typography>
+                        <IconButton size='small' color="error"
+                          aria-label="delete"
+                          onClick={handleAllowanceItemDelete(i)}
+                        >
+                          <DeleteIcon fontSize="inherit" />
+                        </IconButton>
+                      </Stack>
+
+                    </Grid>
+                    <Grid xs={5} sm={7}>
                       <TextField
-                        label={getUnitDescription(o.unit)}
-                        value={quantity}
-                        onChange={handleAllowanceItemChange(i, 'quantity', parseInt)}
-                        name={`allowances[${i}].quantity`}
-                        id={`allowances_${i}_quantity`}
+                        label={"Valor"}
+                        value={value}
+                        onChange={handleAllowanceItemChange(i, 'value', parseFloat)}
+                        name={`allowances[${i}].value`}
+                        id={`allowances_${i}_value`}
+                        InputProps={{
+                          inputComponent: CurrencyFormat as any,
+                        }}
                         variant="outlined"
-                        type="number"
                         fullWidth
+
                       />
-                    )}
+                    </Grid>
+                    <Grid xs={4} sm={2}>
+                      {o.unit !== 'm' && (
+                        <TextField
+                          label={getUnitDescription(o.unit)}
+                          value={quantity}
+                          onChange={handleAllowanceItemChange(i, 'quantity', parseInt)}
+                          name={`allowances[${i}].quantity`}
+                          id={`allowances_${i}_quantity`}
+                          variant="outlined"
+                          type="number"
+                          fullWidth
+                        />
+                      )}
 
+                    </Grid>
+                    <Grid xs={3} sm={3} display="flex" alignItems="center" justifyContent="end">
+
+                      <Typography variant="body2">{formatCurrency(value * quantity)}</Typography>
+
+                    </Grid>
                   </Grid>
-                  <Grid xs={8} sm={3} textAlign="right" sx={{ pt: 2, position: 'relative' }}>
+                  <Divider sx={{ my: 2 }} />
+                </React.Fragment>
+              );
+            })}
+            <Grid container spacing={2}>
+              <Grid xs={9}>
+                <Typography variant="subtitle2">Total de Ajudas de Custo</Typography>
+              </Grid>
+              <Grid xs={3} textAlign="right">
+                <Typography variant="body2">{formatCurrency(getTotalAllowance())}</Typography>
+              </Grid>
+            </Grid>
+          </Card>
 
-                    <IconButton size='small'
-                      aria-label="delete"
-                      onClick={handleAllowanceItemDelete(i)}
-                      sx={{ mt: 1, position: 'absolute', right: -8, top: -15 }}>
-                      <DeleteIcon fontSize="inherit" />
-                    </IconButton>
-
-                    <Typography variant='caption'>Montante Mensal</Typography>
-                    <Typography>{formatCurrency(value * quantity)}</Typography>
-
-                  </Grid>
-                </Grid>
-              </Card>
-            );
-          })}
           {values.hasVacationTwelfths && (
             <Card sx={{ p: 1, mb: 2 }}>
               <Grid container spacing={2}>
@@ -554,49 +579,69 @@ export default function HomePage() {
           <Card sx={{ p: 1, mb: 2 }}>
             <Grid container spacing={2}>
               <Grid xs={5}>
-                <Typography variant='body2'>Segurança Social</Typography>
+                <Typography variant='subtitle2' sx={{ py: 1 }}>Segurança Social</Typography>
               </Grid>
               <Grid xs={3}>
-                <Typography variant='body2'>{(ss * 100).toFixed(2)}%</Typography>
+                <Typography variant='body2' sx={{ py: 1 }}>{(ss * 100).toFixed(2)}%</Typography>
               </Grid>
               <Grid xs={4} textAlign="right">
-                <Typography variant='body2'>{formatCurrency(baseSalary * ss)}</Typography>
+                <Typography variant='body2' sx={{ py: 1 }}>{formatCurrency(baseSalary * ss)}</Typography>
+              </Grid>
+            </Grid>
+
+
+            {echelon && scale && irs && irs > 0 && (
+              <>
+                <Divider sx={{ mb: 1 }} />
+                <Grid container spacing={2}>
+                  <Grid xs={8}>
+                    <Typography variant='subtitle2' component="div">Imposto de Renda</Typography>
+                    {values.hasRnh ? (
+                      <Typography variant='caption' component="div">Residente não habitual</Typography>
+                    ) : (
+                      <>
+                        <Typography variant='caption' component="div">{echelon.title}</Typography>
+                        <Typography variant='caption' component="div">{echelon.description}</Typography>
+                      </>
+                    )}
+
+                    <Typography variant='body2' component="div">Taxa efetiva: {(irs * 100).toFixed(2)}%</Typography>
+                  </Grid>
+                  <Grid xs={4} display="flex" alignItems="center" justifyContent="end">
+                    <Typography variant='body2'>{formatCurrency(baseSalary * irs)}</Typography>
+                  </Grid>
+                </Grid>
+              </>
+            )}
+
+            <Divider sx={{ mb: 1 }} />
+            <Grid container spacing={2}>
+              <Grid xs={8}>
+                <Typography variant='subtitle2' component="div">Total de Descontos</Typography>
+              </Grid>
+              <Grid xs={4} display="flex" alignItems="center" justifyContent="end">
+                <Typography variant='body2'>{formatCurrency(getTotalDiscounts())}</Typography>
               </Grid>
             </Grid>
           </Card>
-
-          {echelon && scale && irs && (
-            <Card sx={{ p: 1, mb: 2 }}>
-              <Grid container spacing={2}>
-                <Grid xs={8}>
-                  <Typography variant='body2' component="div">Imposto de Renda</Typography>
-                  {values.hasRnh ? (
-                    <Typography variant='caption' component="div">Residente não habitual</Typography>
-                  ) : (
-                    <>
-                      <Typography variant='caption' component="div">{echelon.title}</Typography>
-                      <Typography variant='caption' component="div">{echelon.description}</Typography>
-                    </>
-                  )}
-
-                  <Typography variant='body2' component="div">Taxa efetiva: {(irs * 100).toFixed(2)}%</Typography>
-                </Grid>
-                <Grid xs={4} textAlign="right">
-                  <Typography variant='body2'>{formatCurrency(baseSalary * irs)}</Typography>
-                </Grid>
-              </Grid>
-            </Card>
-          )}
-
           <Typography variant="h6" sx={{ mb: 2, ml: 1 }}>Totais</Typography>
 
-          <Card sx={{ p: 1, mb: 2 }}>
+          <Card sx={{ p: 1, mb: 2, border: '1px solid #07851C', backgroundColor: '#E7FFEA'}}>
             <Grid container spacing={2}>
               <Grid xs={6}>
-                <Typography variant='h5'>Total líquido à receber</Typography>
+                <Typography variant='subtitle1'>Total Bruto</Typography>
               </Grid>
-              <Grid xs={6} textAlign="right">
-                <Typography variant='h5'>{formatCurrency(getTotalNet())}</Typography>
+              <Grid xs={6} display="flex" alignItems="center" justifyContent="end">
+                <Typography variant='subtitle1'>{formatCurrency(getTotalGross(true))}</Typography>
+              </Grid>
+            </Grid>
+            <Divider sx={{my: 1}} />
+            <Grid container spacing={2}>
+              <Grid xs={6}>
+                <Typography variant='subtitle1'>Total Líquido à Receber</Typography>
+              </Grid>
+              <Grid xs={6} display="flex" alignItems="center" justifyContent="end">
+                <Typography variant='subtitle1'>{formatCurrency(getTotalNet())}</Typography>
               </Grid>
             </Grid>
           </Card>
