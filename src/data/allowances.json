@@ -2,6 +2,7 @@
   {
     "name": "Pagamento subsídio de alimentação",
     "isExempt": true,
+    "withdrawable": true,
     "unit": "d",
     "items": [
       {
@@ -17,17 +18,31 @@
     ]
   },
   {
-    "name": "Estadias nacionais",
+    "name": "Pagamento de seguros",
     "isExempt": true,
-    "unit": "d",
+    "withdrawable": false,
+    "unit": "m",
     "items": [
       {
         "id": 3,
+        "name": "Seguro Saúde",
+        "value": null
+      }
+    ]
+  },
+  {
+    "name": "Estadias nacionais",
+    "isExempt": true,
+    "withdrawable": true,
+    "unit": "d",
+    "items": [
+      {
+        "id": 4,
         "name": "Trabalhadores em geral em funções públicas",
         "value": 50.2
       },
       {
-        "id": 4,
+        "id": 5,
         "name": "Administradores, gerentes, membros do Governo e quadros superiores",
         "value": 69.19
       }

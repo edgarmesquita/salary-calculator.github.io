@@ -5,7 +5,7 @@ import {
   AppBar,
   Box, Button, Card, Checkbox, Container, Dialog, DialogActions, DialogContent,
   DialogTitle, Divider, FormControl, FormControlLabel, FormGroup, IconButton, InputAdornment, Link, ListSubheader, MenuItem, Select,
-  SelectChangeEvent, Stack, SwipeableDrawer, Switch, Tab, Tabs, TextField, Toolbar, Tooltip, Typography
+  SelectChangeEvent, Stack, SwipeableDrawer, Tab, Tabs, TextField, Toolbar, Tooltip, Typography
 } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2';
 import React, { ReactNode } from 'react';
@@ -14,24 +14,29 @@ import HelpIcon from '@mui/icons-material/Help';
 import AddIcon from '@mui/icons-material/Add';
 import { getEchelon, getIrsDeductionAmount, getScale } from '@/funcs/irs';
 import { formatCurrency, generateRandomIntegerInRange } from '@/funcs';
-import { getAllowanceGroup, getAllowanceItem, getAllowances, getUnitDescription } from '@/funcs/allowance';
+import { getAllowanceGroup, getAllowanceItem, getAllowances, getDefaultQuantityByUnit, getUnitDescription } from '@/funcs/allowance';
 import CloseIcon from '@mui/icons-material/Close';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { Allowance, AllowanceItem } from '@/models/allowance';
+import { useStateCallback } from '../hooks';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/store';
+import { addAllowanceItem, removeAllowanceItemByIndex, updateAllowanceItemByIndex } from '@/store/allowance/slice';
+import { AllowanceItemState } from '@/store/allowance/types';
 
-interface StateAllowanceItem {
-  id: number;
-  name: string;
-  quantity: number;
-  value: number;
-  unit: "h" | "d" | "m"
+
+interface StateCustomAllowance {
+  customAllowanceName: string;
+  customAllowanceValue: number | null;
+  customAllowanceQuantity?: number | null;
+  customAllowanceUnit: "h" | "d" | "m";
+  customAllowanceDefaultValue: boolean;
 }
-interface State {
+
+interface State extends StateCustomAllowance {
   baseSalary: number;
   dependents: number;
   handicapped: boolean;
   allowanceId: number;
-  allowances: StateAllowanceItem[];
   statusId: number;
   hasRnh: boolean;
   hasVacationTwelfths: boolean;
@@ -39,11 +44,6 @@ interface State {
   vacationTwelfthsPercent: 50 | 100;
   christmasTwelfthsPercent: 50 | 100;
   profit: number;
-
-  customAllowanceName: string;
-  customAllowanceValue: number;
-  customAllowanceQuantity?: number | null;
-  customAllowanceUnit: "h" | "d" | "m";
 }
 
 interface TabPanelProps {
@@ -75,12 +75,13 @@ function a11yProps(index: number) {
   };
 }
 
-const getDefaultQuantityByUnit = (unit: 'h' | 'd' | 'm') => {
-  switch (unit) {
-    case 'h': return 8;
-    case 'd': return 22;
-    default: return null;
-  }
+const getEmptyCustomAllowance = () : StateCustomAllowance => {
+  return {
+    customAllowanceName: '',
+    customAllowanceValue: 0,
+    customAllowanceUnit: 'm',
+    customAllowanceDefaultValue: true
+  };
 }
 
 const baseAllowances = getAllowances();
@@ -94,35 +95,23 @@ const status = [
 ];
 
 export default function HomePage() {
-  const [allowances, setAllowances] = React.useState<Allowance[]>(baseAllowances);
-  const foodAllowanceGroup = getAllowanceGroup(2);
-  const foodAllowanceItem = getAllowanceItem(2);
+  const allowances = useSelector((state: RootState) => state.allowance.allowances);
+  const dispatch = useDispatch();
 
-  const [values, setValues] = React.useState<State>({
+  const emptyCustomAllowance = getEmptyCustomAllowance();
+  const [values, setValues] = useStateCallback<State>({
+    ...emptyCustomAllowance,
     baseSalary: 1000,
     dependents: 0,
     handicapped: false,
     allowanceId: 0,
-    allowances: foodAllowanceItem ? [
-      {
-        id: foodAllowanceItem.id,
-        name: foodAllowanceGroup?.name + ' - ' + foodAllowanceItem?.name,
-        quantity: totalDays,
-        value: foodAllowanceItem.value,
-        unit: foodAllowanceGroup.unit
-      }
-    ] : [],
     statusId: 0,
     hasRnh: false,
     hasVacationTwelfths: false,
     hasChristmasTwelfths: false,
     vacationTwelfthsPercent: 100,
     christmasTwelfthsPercent: 100,
-    profit: 25,
-
-    customAllowanceName: '',
-    customAllowanceValue: 0,
-    customAllowanceUnit: 'm'
+    profit: 25
   });
   const [open, setOpen] = React.useState(false);
   const [tab, setTab] = React.useState(0);
@@ -132,11 +121,11 @@ export default function HomePage() {
     setTab(newValue);
   };
 
-  const setValue = (prop: keyof State, value: any) => {
+  const setValue = (prop: keyof State, value: any, callback?: (value: any) => void) => {
     setValues({
       ...values,
       [prop]: value
-    });
+    }, state => callback?.call(null, state[prop]));
   }
   const handleChange = (prop: keyof State) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(prop, event.target.value);
@@ -148,57 +137,33 @@ export default function HomePage() {
     setValue(prop, value);
   };
 
-  const handleAllowanceItemChange = (index: number, prop: keyof StateAllowanceItem, parse: (value: string) => number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    const allowances = [...values.allowances];
-    let value = parse(event.target.value);
-
-    if (value < 0)
-      value = 0;
-
-    allowances[index][prop] = value as never;
-    setValue("allowances", allowances);
+  const handleAllowanceItemChange = (index: number, prop: keyof AllowanceItemState, parse: (value: string) => number) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parse(event.target.value);
+    dispatch(updateAllowanceItemByIndex({ index, prop, value }))
   };
 
   const handleAllowanceItemDelete = (index: number) => (event: React.MouseEvent) => {
-    const allowances = [...values.allowances];
-    allowances.splice(index, 1);
-    setValue("allowances", allowances);
+    dispatch(removeAllowanceItemByIndex(index))
   }
 
   const handleSelectChange = (prop: keyof State, isNumber: boolean) => (event: SelectChangeEvent<number>) => {
     const value = event.target.value.toString();
-    setValue(prop, isNumber ? parseInt(value) : value);
+    const parsedValue = isNumber ? parseInt(value) : value;
+    setValue(prop, parsedValue);
   }
 
   const handleAllowanceAddClick = (event: React.MouseEvent) => {
-    if (values.allowanceId === null || values.allowanceId === undefined || values.allowanceId === 0)
-      return;
 
-    let allowance: StateAllowanceItem | null = null;
-    if (values.allowanceId === -1) {
-      allowance = {
-        id: generateRandomIntegerInRange(100, 99999),
+    dispatch(addAllowanceItem({
+      allowanceId: values.allowanceId,
+      customItem: {
         name: values.customAllowanceName,
-        quantity: values.customAllowanceQuantity || 1,
+        quantity: values.customAllowanceQuantity,
         value: values.customAllowanceValue,
-        unit: values.customAllowanceUnit
+        unit: values.customAllowanceUnit,
+        withdrawable: true
       }
-    }
-    else {
-      const allowanceGroup = getAllowanceGroup(values.allowanceId);
-      const allowanceItem = getAllowanceItem(values.allowanceId);
-      if (!allowanceItem)
-        return;
-
-      allowance = {
-        id: allowanceItem.id,
-        name: allowanceGroup.name + ' - ' + allowanceItem.name,
-        quantity: totalDays,
-        value: allowanceItem.value,
-        unit: allowanceGroup.unit
-      };
-    }
-
+    }));
 
     setValues({
       ...values,
@@ -207,7 +172,7 @@ export default function HomePage() {
       customAllowanceUnit: 'm',
       customAllowanceQuantity: null,
       customAllowanceValue: 0,
-      allowances: [...values.allowances, allowance],
+      customAllowanceDefaultValue: true
     });
     setOpen(false);
   }
@@ -228,6 +193,38 @@ export default function HomePage() {
       [prop]: event.target.checked,
     });
   };
+
+  const handleAllowanceIdChange = (event: SelectChangeEvent<number>) => {
+    const value = parseInt(event.target.value.toString());
+    const newValue = {
+      ...values,
+      allowanceId: value,
+      ...emptyCustomAllowance
+    };
+
+    if (value <= 0) {
+      setValues(newValue);
+      return;
+    }
+
+    const allowanceGroup = getAllowanceGroup(value);
+    const allowanceItem = getAllowanceItem(value);
+
+    if (!allowanceItem) {
+      setValues(newValue);
+      return;
+    }
+
+    setValues({
+      ...newValue,
+      customAllowanceName: allowanceGroup.name + ' - ' + allowanceItem.name,
+      customAllowanceUnit: allowanceGroup.unit,
+      customAllowanceQuantity: getDefaultQuantityByUnit(allowanceGroup.unit),
+      customAllowanceValue: allowanceItem.value ?? 0,
+      customAllowanceDefaultValue: allowanceItem.value != null
+    });
+
+  }
 
   const toggleDrawer =
     (open: boolean) =>
@@ -252,13 +249,20 @@ export default function HomePage() {
       salary += (baseSalary * (values.christmasTwelfthsPercent / 100)) / 12;
     return salary + (includeAllowances ? getTotalAllowance() : 0);
   }
-  const getTotalNet = () => {
+
+  const getTotalNetWithoutAllowances = () => {
     const salary = getTotalGross();
-    return salary - getTotalDiscounts(salary) + allowanceSum;
+    return salary - getTotalDiscounts(salary);
   }
 
-  const getTotalAllowance = () => {
-    return values.allowances.map(o => o.value * (isNaN(o.quantity) ? 0 : o.quantity)).reduce((a, b) => a + b, 0);
+  const getTotalNet = (onlyWithdrawable: boolean = false) => {
+    return getTotalNetWithoutAllowances() + getTotalAllowance(onlyWithdrawable);
+  }
+
+  const getTotalAllowance = (onlyWithdrawable: boolean = false) => {
+    return allowances
+      .filter(o => onlyWithdrawable ? o.withdrawable : o.value > 0)
+      .map(o => o.value * (isNaN(o.quantity) ? 0 : o.quantity)).reduce((a, b) => a + b, 0);
   }
 
   const getTotalDiscounts = (salary?: number) => {
@@ -431,7 +435,6 @@ export default function HomePage() {
             </Grid>
           </Card>
 
-
           <Stack direction={"row"} sx={{ mb: 2 }}>
             <Typography variant="h6" sx={{ ml: 1, flexGrow: 1 }}>Ajudas de Custo</Typography>
             <Button
@@ -441,12 +444,12 @@ export default function HomePage() {
               size='small'
               sx={{ mb: 2 }}
               onClick={handleClickOpen}
-              disabled={values.allowances.reduce((a, b) => a + b.id, 0) === allowances.map(o => o.items).reduce((a, b) => a.concat(b)).reduce((a, b) => a + b.id, 0)}>
+              disabled={allowances.reduce((a, b) => a + b.id, 0) === baseAllowances.map(o => o.items).reduce((a, b) => a.concat(b)).reduce((a, b) => a + b.id, 0)}>
               <AddIcon />{" "}Ajuda de Custo
             </Button>
           </Stack>
           <Card sx={{ p: 1, mb: 2 }}>
-            {values.allowances.map((o, i) => {
+            {allowances.map((o, i) => {
               let quantity = isNaN(o.quantity) || o.quantity < 0 ? 0 : o.quantity;
               if (quantity.toString().length > 3)
                 quantity = parseInt(quantity.toString().substring(0, 3));
@@ -626,7 +629,7 @@ export default function HomePage() {
           </Card>
           <Typography variant="h6" sx={{ mb: 2, ml: 1 }}>Totais</Typography>
 
-          <Card sx={{ p: 1, mb: 2, border: '1px solid #07851C', backgroundColor: '#E7FFEA'}}>
+          <Card sx={{ p: 1, mb: 2, border: '1px solid #07851C', backgroundColor: '#E7FFEA' }}>
             <Grid container spacing={2}>
               <Grid xs={6}>
                 <Typography variant='subtitle1'>Total Bruto</Typography>
@@ -635,13 +638,22 @@ export default function HomePage() {
                 <Typography variant='subtitle1'>{formatCurrency(getTotalGross(true))}</Typography>
               </Grid>
             </Grid>
-            <Divider sx={{my: 1}} />
+            <Divider sx={{ my: 1 }} />
+            <Grid container spacing={2}>
+              <Grid xs={6}>
+                <Typography variant='subtitle1'>Total Líquido (sem ajudas de custo)</Typography>
+              </Grid>
+              <Grid xs={6} display="flex" alignItems="center" justifyContent="end">
+                <Typography variant='subtitle1'>{formatCurrency(getTotalNetWithoutAllowances())}</Typography>
+              </Grid>
+            </Grid>
+            <Divider sx={{ my: 1 }} />
             <Grid container spacing={2}>
               <Grid xs={6}>
                 <Typography variant='subtitle1'>Total Líquido à Receber</Typography>
               </Grid>
               <Grid xs={6} display="flex" alignItems="center" justifyContent="end">
-                <Typography variant='subtitle1'>{formatCurrency(getTotalNet())}</Typography>
+                <Typography variant='subtitle1'>{formatCurrency(getTotalNet(true))}</Typography>
               </Grid>
             </Grid>
           </Card>
@@ -834,7 +846,7 @@ export default function HomePage() {
                   value={values.allowanceId}
                   defaultValue={values.allowanceId}
                   id="allowanceId"
-                  onChange={handleSelectChange("allowanceId", true)}>
+                  onChange={handleAllowanceIdChange}>
                   <MenuItem disabled value={0}>
                     <em>Selecione a ajuda de custo...</em>
                   </MenuItem>
@@ -843,7 +855,7 @@ export default function HomePage() {
                     [
                       (<ListSubheader key={a.name}>{a.name}</ListSubheader>),
                       a.items.map(item => (
-                        <MenuItem key={item.id} value={item.id} disabled={values.allowances.findIndex(o => o.id === item.id) >= 0}>{item.name}</MenuItem>
+                        <MenuItem key={item.id} value={item.id} disabled={allowances.findIndex(o => o.id === item.id) >= 0}>{item.name}</MenuItem>
                       ))
                     ] as ReactNode
                   )}
@@ -852,6 +864,27 @@ export default function HomePage() {
                 </Select>
               </FormControl>
 
+              {values.allowanceId > 0 && !values.customAllowanceDefaultValue && (
+                <Grid container spacing={2} sx={{ mt: 2 }}>
+                  <Grid xs={5}>
+                    <TextField
+                      label="Valor"
+                      value={values.customAllowanceValue}
+                      onChange={handleNumberChange("customAllowanceValue", parseFloat)}
+                      name="customAllowanceValue"
+                      id="customAllowanceValue"
+                      InputProps={{
+                        inputComponent: CurrencyFormat as any,
+                      }}
+                      variant="outlined"
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid xs={4} display="flex" alignItems="center">
+                    Por mês
+                  </Grid>
+                </Grid>
+              )}
               {values.allowanceId === -1 && (
                 <>
                   <TextField sx={{ mt: 2 }}
