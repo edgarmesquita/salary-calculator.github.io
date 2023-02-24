@@ -22,7 +22,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { addAllowanceItem, removeAllowanceItemByIndex, updateAllowanceItemByIndex } from '@/store/allowance/slice';
 import { AllowanceItemState } from '@/store/allowance/types';
-
+import { event } from '@/funcs/gtag';
 
 interface StateCustomAllowance {
   customAllowanceName: string;
@@ -127,14 +127,18 @@ export default function HomePage() {
       [prop]: value
     }, state => callback?.call(null, state[prop]));
   }
-  const handleChange = (prop: keyof State) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(prop, event.target.value);
+
+  const handleChange = (prop: keyof State, label?: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setValue(prop, value);
+    event({action: 'change', category: prop, label: label || value, value: 0});
   };
 
-  const handleNumberChange = (prop: keyof State, parse: (value: string) => number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    let value = parse(event.target.value);
+  const handleNumberChange = (prop: keyof State, label: string, parse: (value: string) => number) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = parse(e.target.value);
     if (value < 0) value = 0;
     setValue(prop, value);
+    event({action: 'change', category: prop, label, value });
   };
 
   const handleAllowanceItemChange = (index: number, prop: keyof AllowanceItemState, parse: (value: string) => number) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -146,10 +150,11 @@ export default function HomePage() {
     dispatch(removeAllowanceItemByIndex(index))
   }
 
-  const handleSelectChange = (prop: keyof State, isNumber: boolean) => (event: SelectChangeEvent<number>) => {
-    const value = event.target.value.toString();
+  const handleSelectChange = (prop: keyof State, getLabel: (value: string | number) => string, isNumber: boolean) => (e: SelectChangeEvent<number>) => {
+    const value = e.target.value.toString();
     const parsedValue = isNumber ? parseInt(value) : value;
     setValue(prop, parsedValue);
+    event({action: 'select', category: prop, label: getLabel(parsedValue), value: isNumber ? parsedValue as number : 0});
   }
 
   const handleAllowanceAddClick = (event: React.MouseEvent) => {
@@ -394,7 +399,7 @@ export default function HomePage() {
                 <TextField
                   label="Salário Base"
                   value={baseSalary}
-                  onChange={handleNumberChange("baseSalary", parseFloat)}
+                  onChange={handleNumberChange("baseSalary", "Salário Base", parseFloat)}
                   name="baseSalary"
                   id="baseSalary"
                   InputProps={{
@@ -410,7 +415,7 @@ export default function HomePage() {
                     value={values.statusId}
                     defaultValue={values.statusId}
                     id="statusId"
-                    onChange={handleSelectChange("statusId", true)}>
+                    onChange={handleSelectChange("statusId", id => status.find(stt => stt.id === id)?.name || '', true)}>
                     <MenuItem disabled value={0}>
                       <em>Selecione estado civil...</em>
                     </MenuItem>
@@ -424,7 +429,7 @@ export default function HomePage() {
                 <TextField
                   label="Dependentes"
                   value={values.dependents}
-                  onChange={handleNumberChange("dependents", parseInt)}
+                  onChange={handleNumberChange("dependents", "Dependentes", parseInt)}
                   name="dependents"
                   id="dependents"
                   variant="outlined"
@@ -535,7 +540,7 @@ export default function HomePage() {
                       value={values.vacationTwelfthsPercent}
                       defaultValue={values.vacationTwelfthsPercent}
                       id="vacationTwelfthsPercent"
-                      onChange={handleSelectChange("vacationTwelfthsPercent", true)}>
+                      onChange={handleSelectChange("vacationTwelfthsPercent", (value) => `${value}%`, true)}>
                       <MenuItem value={50}>50%</MenuItem>
                       <MenuItem value={100}>100%</MenuItem>
                     </Select>
@@ -562,7 +567,7 @@ export default function HomePage() {
                       value={values.christmasTwelfthsPercent}
                       defaultValue={values.christmasTwelfthsPercent}
                       id="christmasTwelfthsPercent"
-                      onChange={handleSelectChange("christmasTwelfthsPercent", true)}>
+                      onChange={handleSelectChange("christmasTwelfthsPercent", (value) => `${value}%`, true)}>
                       <MenuItem value={50}>50%</MenuItem>
                       <MenuItem value={100}>100%</MenuItem>
                     </Select>
@@ -803,7 +808,7 @@ export default function HomePage() {
                 <TextField
                   label="Lucro"
                   value={values.profit}
-                  onChange={handleNumberChange("profit", parseInt)}
+                  onChange={handleNumberChange("profit", "Lucro", parseInt)}
                   name="profit"
                   id="profit"
                   variant="outlined"
@@ -870,7 +875,7 @@ export default function HomePage() {
                     <TextField
                       label="Valor"
                       value={values.customAllowanceValue}
-                      onChange={handleNumberChange("customAllowanceValue", parseFloat)}
+                      onChange={handleNumberChange("customAllowanceValue", values.customAllowanceName, parseFloat)}
                       name="customAllowanceValue"
                       id="customAllowanceValue"
                       InputProps={{
@@ -901,7 +906,7 @@ export default function HomePage() {
                       <TextField
                         label="Valor"
                         value={values.customAllowanceValue}
-                        onChange={handleNumberChange("customAllowanceValue", parseFloat)}
+                        onChange={handleNumberChange("customAllowanceValue", (values.customAllowanceName || 'Ajuda de Custo Customizado') + ' - Valor', parseFloat)}
                         name="customAllowanceValue"
                         id="customAllowanceValue"
                         InputProps={{
@@ -916,7 +921,7 @@ export default function HomePage() {
                         <TextField
                           label="Quantidade"
                           value={values.customAllowanceQuantity || getDefaultQuantityByUnit(values.customAllowanceUnit)}
-                          onChange={handleNumberChange("customAllowanceQuantity", parseInt)}
+                          onChange={handleNumberChange("customAllowanceQuantity", (values.customAllowanceName || 'Ajuda de Custo Customizado') + ' - Quantidade', parseInt)}
                           name="customAllowanceQuantity"
                           id="customAllowanceQuantity"
                           variant="outlined"
@@ -932,7 +937,7 @@ export default function HomePage() {
                           value={values.customAllowanceUnit as any}
                           defaultValue={values.customAllowanceUnit as any}
                           id="customAllowanceUnit"
-                          onChange={handleSelectChange("customAllowanceUnit", false)}>
+                          onChange={handleSelectChange("customAllowanceUnit", (value) => (values.customAllowanceName || 'Ajuda de Custo Customizado') + getUnitDescription(value.toString() as any), false)}>
                           <MenuItem disabled value={''}>
                             <em>Unidade...</em>
                           </MenuItem>

@@ -3,6 +3,7 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 import { AddAllowanceItemRequest, AllowanceItemState, AllowanceState, UpdateAllowanceItemRequest } from './types'
 import { getAllowanceGroup, getAllowanceItem, getAllowances, getDefaultQuantityByUnit } from '@/funcs/allowance';
 import { generateRandomIntegerInRange } from '@/funcs';
+import { event } from '@/funcs/gtag';
 
 const baseAllowances = getAllowances();
 const foodAllowanceGroup = getAllowanceGroup(2);
@@ -40,7 +41,9 @@ export const allowanceSlice: Slice<AllowanceState, SliceCaseReducers<AllowanceSt
         return;
 
       let allowance: AllowanceItemState | null = null;
+      let category: string | null = null;
       if (action.payload.allowanceId === -1) {
+        category = 'C'
         allowance = {
           id: generateRandomIntegerInRange(100, 99999),
           name: action.payload.customItem?.name || '',
@@ -66,7 +69,11 @@ export const allowanceSlice: Slice<AllowanceState, SliceCaseReducers<AllowanceSt
         };
       }
 
-      state.allowances.push(allowance);
+      if(allowance)
+      {
+        state.allowances.push(allowance);
+        event({action: 'add', category: 'allowance', label: allowance.name, value: allowance.value * allowance.quantity})
+      }
     },
   },
 })

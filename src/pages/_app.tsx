@@ -7,14 +7,29 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Head from 'next/head';
 import Script from 'next/script';
-import { GA_MEASUREMENT_ID } from '@/funcs/gtag';
+import { GA_MEASUREMENT_ID, pageview } from '@/funcs/gtag';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 function MyApp({ Component, ...rest }: AppProps) {
+  const router = useRouter();
   const title = "Calculadora de Salário - eQuantic Tech";
   const desc = "Cálculo de Salário para Contratos com/sem termo, Recibos Verdes ou Fatura como Empresa Unipessoal";
   const url = "https://salary-calculator.equantic.tech";
   const img = `${url}/logo.png`;
 
+  useEffect(() => {
+    const handleRouteChange = (url: string) => {
+      pageview(url);
+    };
+
+    router.events.on("routeChangeComplete", handleRouteChange);
+
+    return () => {
+      router.events.off("routeChangeComplete", handleRouteChange);
+    };
+  }, [router.events]);
+  
   return (
     <>
       <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} />

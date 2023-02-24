@@ -15,11 +15,11 @@ export const getAllowanceItem = (id: number) : AllowanceItem | undefined => {
 export const getUnitDescription = (unit?: "h" | "d" | "m") => {
   switch (unit) {
     case "h":
-      return "Hours";
+      return "Horas";
     case "d":
-      return "Days";
+      return "Dias";
     case "m":
-      return "Months";
+      return "Meses";
   }
   return null;
 }
