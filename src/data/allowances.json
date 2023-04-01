@@ -8,12 +8,12 @@
       {
         "id": 1,
         "name": "Em dinheiro",
-        "value": 5.2
+        "value": 6
       },
       {
         "id": 2,
         "name": "Em vale ou cartão refeição",
-        "value": 8.32
+        "value": 9.6
       }
     ]
   },
@@ -31,7 +31,7 @@
     ]
   },
   {
-    "name": "Estadias nacionais",
+    "name": "Deslocações no país (continente e ilhas)",
     "isExempt": true,
     "withdrawable": true,
     "unit": "d",
@@ -45,6 +45,24 @@
         "id": 5,
         "name": "Administradores, gerentes, membros do Governo e quadros superiores",
         "value": 69.19
+      }
+    ]
+  },
+  {
+    "name": "Deslocações no estrangeiro",
+    "isExempt": true,
+    "withdrawable": true,
+    "unit": "d",
+    "items": [
+      {
+        "id": 4,
+        "name": "Trabalhadores em geral em funções públicas",
+        "value": 89.35
+      },
+      {
+        "id": 5,
+        "name": "Administradores, gerentes, membros do Governo e quadros superiores",
+        "value": 100.24
       }
     ]
   }

@@ -382,7 +382,7 @@ export default function HomePage() {
         </Box>
       </SwipeableDrawer>
       <Container maxWidth="md" sx={{ pt: 3 }}>
-        <Alert severity="warning">Atenção! O cálculo do IRS está a basear-se na nova <Link href="https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/tabela_ret_doclib/Documents/Tabelas_RF_Continente_2_Semestre_2023_Portal.xlsx" target="_blank">Tabela de Junho de 2023</Link>.</Alert>
+        <Alert severity="warning">Atenção! O cálculo do IRS está a basear-se na nova <Link href="https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/tabela_ret_doclib/Documents/Tabelas_RF_Continente_2_Semestre_2023_Portal.xlsx" target="_blank">Tabela de Julho de 2023</Link>.</Alert>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs value={tab} onChange={handleTabChange} aria-label="tipos de contratos">
             <Tab label="Contrato" {...a11yProps(0)} />
