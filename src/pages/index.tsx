@@ -4,7 +4,7 @@ import {
   Alert,
   AppBar,
   Box, Button, Card, Checkbox, Container, Dialog, DialogActions, DialogContent,
-  DialogTitle, Divider, FormControl, FormControlLabel, FormGroup, IconButton, InputAdornment, Link, ListSubheader, MenuItem, Select,
+  DialogTitle, Divider, FormControl, FormControlLabel, FormGroup, IconButton, InputAdornment, Link, List, ListItem, ListItemButton, ListItemIcon, ListItemText, ListSubheader, MenuItem, Select,
   SelectChangeEvent, Stack, SwipeableDrawer, Tab, Tabs, TextField, Toolbar, Tooltip, Typography
 } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2';
@@ -12,6 +12,7 @@ import React, { ReactNode } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import HelpIcon from '@mui/icons-material/Help';
 import AddIcon from '@mui/icons-material/Add';
+import FeedbackIcon from '@mui/icons-material/Feedback';
 import { getEchelon, getIrsDeductionAmount, getScale } from '@/funcs/irs';
 import { formatCurrency, generateRandomIntegerInRange } from '@/funcs';
 import { getAllowanceGroup, getAllowanceItem, getAllowances, getDefaultQuantityByUnit, getUnitDescription } from '@/funcs/allowance';
@@ -23,6 +24,7 @@ import { RootState } from '@/store';
 import { addAllowanceItem, removeAllowanceItemByIndex, updateAllowanceItemByIndex } from '@/store/allowance/slice';
 import { AllowanceItemState } from '@/store/allowance/types';
 import { event } from '@/funcs/gtag';
+import AboutUsDialog from '@/components/AboutUsDialog';
 
 interface StateCustomAllowance {
   customAllowanceName: string;
@@ -75,7 +77,7 @@ function a11yProps(index: number) {
   };
 }
 
-const getEmptyCustomAllowance = () : StateCustomAllowance => {
+const getEmptyCustomAllowance = (): StateCustomAllowance => {
   return {
     customAllowanceName: '',
     customAllowanceValue: 0,
@@ -116,6 +118,7 @@ export default function HomePage() {
   const [open, setOpen] = React.useState(false);
   const [tab, setTab] = React.useState(0);
   const [drawer, setDrawer] = React.useState(false);
+  const [aboutDialog, setAboutDialog] = React.useState(false);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue);
@@ -131,14 +134,14 @@ export default function HomePage() {
   const handleChange = (prop: keyof State, label?: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setValue(prop, value);
-    event({action: 'change', category: prop, label: label || value, value: 0});
+    event({ action: 'change', category: prop, label: label || value, value: 0 });
   };
 
   const handleNumberChange = (prop: keyof State, label: string, parse: (value: string) => number) => (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = parse(e.target.value);
     if (value < 0) value = 0;
     setValue(prop, value);
-    event({action: 'change', category: prop, label, value });
+    event({ action: 'change', category: prop, label, value });
   };
 
   const handleAllowanceItemChange = (index: number, prop: keyof AllowanceItemState, parse: (value: string) => number) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -154,7 +157,7 @@ export default function HomePage() {
     const value = e.target.value.toString();
     const parsedValue = isNumber ? parseInt(value) : value;
     setValue(prop, parsedValue);
-    event({action: 'select', category: prop, label: getLabel(parsedValue), value: isNumber ? parsedValue as number : 0});
+    event({ action: 'select', category: prop, label: getLabel(parsedValue), value: isNumber ? parsedValue as number : 0 });
   }
 
   const handleAllowanceAddClick = (event: React.MouseEvent) => {
@@ -379,6 +382,20 @@ export default function HomePage() {
               labelPlacement="end"
             />
           </FormGroup>
+
+          <Divider />
+          <List>
+
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => setAboutDialog(true)}>
+                <ListItemIcon>
+                  <FeedbackIcon />
+                </ListItemIcon>
+                <ListItemText primary={"Sobre Nós"} />
+              </ListItemButton>
+            </ListItem>
+
+          </List>
         </Box>
       </SwipeableDrawer>
       <Container maxWidth="md" sx={{ pt: 3 }}>
@@ -959,6 +976,8 @@ export default function HomePage() {
           </DialogActions>
         </Dialog>
       </Container >
+
+      <AboutUsDialog open={aboutDialog} onClose={() => setAboutDialog(false)} />
     </>
   )
 }
