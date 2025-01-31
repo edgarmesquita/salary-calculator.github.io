@@ -1,0 +1,724 @@
+[
+  {
+    "title": "Tabela I - Trabalho dependente",
+    "description": "Não casado sem dependentes ou casado 2 titulares",
+    "status": [
+      {
+        "married": false,
+        "holders": 1,
+        "dependents": 0,
+        "allowMoreDependents": false,
+        "handicapped": false
+      },
+      {
+        "married": true,
+        "holders": 2,
+        "dependents": 0,
+        "allowMoreDependents": true,
+        "handicapped": false
+      }
+    ],
+    "scales": [
+      {
+        "maxSalary": 870.0,
+        "maxMarginalRate": 0.0,
+        "deduction": 0.0,
+        "dependentDeduction": 0.0,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.0
+      },
+      {
+        "maxSalary": 992.0,
+        "maxMarginalRate": 0.13,
+        "deduction": 0.13,
+        "dependentDeduction": 21.43,
+        "fixedDeduction": 1208.32,
+        "deductionCoefficient": 2.6,
+        "effectiveRate": 0.056
+      },
+      {
+        "maxSalary": 1070.0,
+        "maxMarginalRate": 0.165,
+        "deduction": 0.165,
+        "dependentDeduction": 21.43,
+        "fixedDeduction": 1477.67,
+        "deductionCoefficient": 1.35,
+        "effectiveRate": 0.08
+      },
+      {
+        "maxSalary": 1136.0,
+        "maxMarginalRate": 0.165,
+        "deduction": 90.80849250000003,
+        "dependentDeduction": 21.43,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.085
+      },
+      {
+        "maxSalary": 1187.0,
+        "maxMarginalRate": 0.22,
+        "deduction": 153.29,
+        "dependentDeduction": 21.43,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.091
+      },
+      {
+        "maxSalary": 1787.0,
+        "maxMarginalRate": 0.25,
+        "deduction": 188.9,
+        "dependentDeduction": 21.43,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.144
+      },
+      {
+        "maxSalary": 2078.0,
+        "maxMarginalRate": 0.32,
+        "deduction": 313.99,
+        "dependentDeduction": 21.43,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.169
+      },
+      {
+        "maxSalary": 2432.0,
+        "maxMarginalRate": 0.355,
+        "deduction": 386.72,
+        "dependentDeduction": 21.43,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.196
+      },
+      {
+        "maxSalary": 3233.0,
+        "maxMarginalRate": 0.3872,
+        "deduction": 465.03,
+        "dependentDeduction": 21.43,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.243
+      },
+      {
+        "maxSalary": 5547.0,
+        "maxMarginalRate": 0.4005,
+        "deduction": 508.03,
+        "dependentDeduction": 21.43,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.309
+      },
+      {
+        "maxSalary": 20221.0,
+        "maxMarginalRate": 0.4495,
+        "deduction": 779.83,
+        "dependentDeduction": 21.43,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.411
+      },
+      {
+        "maxSalary": 999999.99,
+        "maxMarginalRate": 0.4717,
+        "deduction": 1228.74,
+        "dependentDeduction": 21.43,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": null
+      }
+    ]
+  },
+  {
+    "title": "Tabela II - Trabalho dependente",
+    "description": "Não casado com um ou mais dependentes",
+    "status": [
+      {
+        "married": false,
+        "holders": 1,
+        "dependents": 1,
+        "allowMoreDependents": true,
+        "handicapped": false
+      }
+    ],
+    "scales": [
+      {
+        "maxSalary": 870.0,
+        "maxMarginalRate": 0.0,
+        "deduction": 0.0,
+        "dependentDeduction": 0.0,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.0
+      },
+      {
+        "maxSalary": 992.0,
+        "maxMarginalRate": 0.13,
+        "deduction": 0.13,
+        "dependentDeduction": 34.29,
+        "fixedDeduction": 1208.32,
+        "deductionCoefficient": 2.6,
+        "effectiveRate": 0.056
+      },
+      {
+        "maxSalary": 1070.0,
+        "maxMarginalRate": 0.165,
+        "deduction": 0.165,
+        "dependentDeduction": 34.29,
+        "fixedDeduction": 1477.67,
+        "deductionCoefficient": 1.35,
+        "effectiveRate": 0.08
+      },
+      {
+        "maxSalary": 1136.0,
+        "maxMarginalRate": 0.165,
+        "deduction": 90.80849250000003,
+        "dependentDeduction": 34.29,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.085
+      },
+      {
+        "maxSalary": 1187.0,
+        "maxMarginalRate": 0.22,
+        "deduction": 153.29,
+        "dependentDeduction": 34.29,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.091
+      },
+      {
+        "maxSalary": 1787.0,
+        "maxMarginalRate": 0.25,
+        "deduction": 188.9,
+        "dependentDeduction": 34.29,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.144
+      },
+      {
+        "maxSalary": 2078.0,
+        "maxMarginalRate": 0.32,
+        "deduction": 313.99,
+        "dependentDeduction": 34.29,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.169
+      },
+      {
+        "maxSalary": 2432.0,
+        "maxMarginalRate": 0.355,
+        "deduction": 386.72,
+        "dependentDeduction": 34.29,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.196
+      },
+      {
+        "maxSalary": 3233.0,
+        "maxMarginalRate": 0.3872,
+        "deduction": 465.03,
+        "dependentDeduction": 34.29,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.243
+      },
+      {
+        "maxSalary": 5547.0,
+        "maxMarginalRate": 0.4005,
+        "deduction": 508.03,
+        "dependentDeduction": 34.29,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.309
+      },
+      {
+        "maxSalary": 20221.0,
+        "maxMarginalRate": 0.4495,
+        "deduction": 779.83,
+        "dependentDeduction": 34.29,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.411
+      },
+      {
+        "maxSalary": 999999.99,
+        "maxMarginalRate": 0.4717,
+        "deduction": 1228.74,
+        "dependentDeduction": 34.29,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": null
+      }
+    ]
+  },
+  {
+    "title": "Tabela III - Trabalho dependente",
+    "description": "Casado, único titular",
+    "status": [
+      {
+        "married": true,
+        "holders": 1,
+        "dependents": 0,
+        "allowMoreDependents": true,
+        "handicapped": false
+      }
+    ],
+    "scales": [
+      {
+        "maxSalary": 957.0,
+        "maxMarginalRate": 0.0,
+        "deduction": 0.0,
+        "dependentDeduction": 0.0,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.0
+      },
+      {
+        "maxSalary": 992.0,
+        "maxMarginalRate": 0.13,
+        "deduction": 0.13,
+        "dependentDeduction": 42.86,
+        "fixedDeduction": 1324.55,
+        "deductionCoefficient": 2.6,
+        "effectiveRate": 0.017
+      },
+      {
+        "maxSalary": 1070.0,
+        "maxMarginalRate": 0.13,
+        "deduction": 0.13,
+        "dependentDeduction": 42.86,
+        "fixedDeduction": 1632.65,
+        "deductionCoefficient": 1.35,
+        "effectiveRate": 0.038
+      },
+      {
+        "maxSalary": 1081.0,
+        "maxMarginalRate": 0.13,
+        "deduction": 98.74507500000003,
+        "dependentDeduction": 42.86,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.039
+      },
+      {
+        "maxSalary": 1408.0,
+        "maxMarginalRate": 0.132,
+        "deduction": 100.91,
+        "dependentDeduction": 42.86,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.06
+      },
+      {
+        "maxSalary": 1931.0,
+        "maxMarginalRate": 0.165,
+        "deduction": 147.37,
+        "dependentDeduction": 42.86,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.089
+      },
+      {
+        "maxSalary": 2200.0,
+        "maxMarginalRate": 0.2018,
+        "deduction": 218.43,
+        "dependentDeduction": 42.86,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.103
+      },
+      {
+        "maxSalary": 2698.0,
+        "maxMarginalRate": 0.2362,
+        "deduction": 294.11,
+        "dependentDeduction": 42.86,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.127
+      },
+      {
+        "maxSalary": 3317.0,
+        "maxMarginalRate": 0.2594,
+        "deduction": 356.7,
+        "dependentDeduction": 42.86,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.152
+      },
+      {
+        "maxSalary": 5965.0,
+        "maxMarginalRate": 0.3072,
+        "deduction": 515.25,
+        "dependentDeduction": 42.86,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.221
+      },
+      {
+        "maxSalary": 20265.0,
+        "maxMarginalRate": 0.3872,
+        "deduction": 992.45,
+        "dependentDeduction": 42.86,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.338
+      },
+      {
+        "maxSalary": 999999.99,
+        "maxMarginalRate": 0.4717,
+        "deduction": 2704.84,
+        "dependentDeduction": 42.86,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": null
+      }
+    ]
+  },
+  {
+    "title": "Tabela IV - Trabalho dependente",
+    "description": "Não casado ou casado dois titulares sem dependentes - Pessoa com deficiência",
+    "status": [
+      {
+        "married": false,
+        "holders": 1,
+        "dependents": 0,
+        "allowMoreDependents": false,
+        "handicapped": true
+      },
+      {
+        "married": true,
+        "holders": 2,
+        "dependents": 0,
+        "allowMoreDependents": false,
+        "handicapped": true
+      }
+    ],
+    "scales": [
+      {
+        "maxSalary": 1694.0,
+        "maxMarginalRate": 0.0,
+        "deduction": 0.0,
+        "dependentDeduction": null,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.0
+      },
+      {
+        "maxSalary": 2032.0,
+        "maxMarginalRate": 0.22,
+        "deduction": 372.68,
+        "dependentDeduction": null,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.037
+      },
+      {
+        "maxSalary": 2452.0,
+        "maxMarginalRate": 0.32,
+        "deduction": 575.88,
+        "dependentDeduction": null,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.085
+      },
+      {
+        "maxSalary": 4420.0,
+        "maxMarginalRate": 0.355,
+        "deduction": 661.7,
+        "dependentDeduction": null,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.205
+      },
+      {
+        "maxSalary": 4680.0,
+        "maxMarginalRate": 0.3872,
+        "deduction": 804.02,
+        "dependentDeduction": null,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.215
+      },
+      {
+        "maxSalary": 6687.0,
+        "maxMarginalRate": 0.4005,
+        "deduction": 866.26,
+        "dependentDeduction": null,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.271
+      },
+      {
+        "maxSalary": 20468.0,
+        "maxMarginalRate": 0.4495,
+        "deduction": 1193.92,
+        "dependentDeduction": null,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.391
+      },
+      {
+        "maxSalary": 999999.99,
+        "maxMarginalRate": 0.4717,
+        "deduction": 1648.31,
+        "dependentDeduction": null,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": null
+      }
+    ]
+  },
+  {
+    "title": "Tabela V - Trabalho dependente",
+    "description": "Não casado com um ou mais dependentes - Pessoa com deficiência",
+    "status": [
+      {
+        "married": false,
+        "holders": 1,
+        "dependents": 1,
+        "allowMoreDependents": true,
+        "handicapped": true
+      }
+    ],
+    "scales": [
+      {
+        "maxSalary": 1938.0,
+        "maxMarginalRate": 0.0,
+        "deduction": 0.0,
+        "dependentDeduction": 0.0,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.0
+      },
+      {
+        "maxSalary": 2032.0,
+        "maxMarginalRate": 0.2212,
+        "deduction": 428.69,
+        "dependentDeduction": 42.86,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.01
+      },
+      {
+        "maxSalary": 2813.0,
+        "maxMarginalRate": 0.32,
+        "deduction": 629.45,
+        "dependentDeduction": 42.86,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.096
+      },
+      {
+        "maxSalary": 4438.0,
+        "maxMarginalRate": 0.355,
+        "deduction": 727.91,
+        "dependentDeduction": 42.86,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.191
+      },
+      {
+        "maxSalary": 6754.0,
+        "maxMarginalRate": 0.3872,
+        "deduction": 870.81,
+        "dependentDeduction": 42.86,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.258
+      },
+      {
+        "maxSalary": 7048.0,
+        "maxMarginalRate": 0.4005,
+        "deduction": 960.64,
+        "dependentDeduction": 42.86,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.264
+      },
+      {
+        "maxSalary": 20468.0,
+        "maxMarginalRate": 0.4495,
+        "deduction": 1305.99,
+        "dependentDeduction": 42.86,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.386
+      },
+      {
+        "maxSalary": 999999.99,
+        "maxMarginalRate": 0.4717,
+        "deduction": 1760.38,
+        "dependentDeduction": 42.86,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": null
+      }
+    ]
+  },
+  {
+    "title": "Tabela VI - Trabalho dependente",
+    "description": "Casado dois titulares com um ou mais dependentes - Pessoa com deficiência",
+    "status": [
+      {
+        "married": true,
+        "holders": 2,
+        "dependents": 1,
+        "allowMoreDependents": true,
+        "handicapped": true
+      }
+    ],
+    "scales": [
+      {
+        "maxSalary": 1668.0,
+        "maxMarginalRate": 0.0,
+        "deduction": 0.0,
+        "dependentDeduction": 0.0,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.0
+      },
+      {
+        "maxSalary": 2043.0,
+        "maxMarginalRate": 0.22,
+        "deduction": 366.96,
+        "dependentDeduction": 21.43,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.04
+      },
+      {
+        "maxSalary": 2465.0,
+        "maxMarginalRate": 0.25,
+        "deduction": 428.25,
+        "dependentDeduction": 21.43,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.076
+      },
+      {
+        "maxSalary": 3067.0,
+        "maxMarginalRate": 0.32,
+        "deduction": 600.8,
+        "dependentDeduction": 21.43,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.124
+      },
+      {
+        "maxSalary": 4438.0,
+        "maxMarginalRate": 0.355,
+        "deduction": 708.15,
+        "dependentDeduction": 21.43,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.195
+      },
+      {
+        "maxSalary": 6754.0,
+        "maxMarginalRate": 0.3872,
+        "deduction": 851.05,
+        "dependentDeduction": 21.43,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.261
+      },
+      {
+        "maxSalary": 7048.0,
+        "maxMarginalRate": 0.4005,
+        "deduction": 940.88,
+        "dependentDeduction": 21.43,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.267
+      },
+      {
+        "maxSalary": 20468.0,
+        "maxMarginalRate": 0.4495,
+        "deduction": 1286.23,
+        "dependentDeduction": 21.43,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.387
+      },
+      {
+        "maxSalary": 999999.99,
+        "maxMarginalRate": 0.4717,
+        "deduction": 1740.62,
+        "dependentDeduction": 21.43,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": null
+      }
+    ]
+  },
+  {
+    "title": "Tabela VII - Trabalho dependente",
+    "description": "Casado, único titular - Pessoa com deficiência",
+    "status": [
+      {
+        "married": true,
+        "holders": 1,
+        "dependents": 0,
+        "allowMoreDependents": false,
+        "handicapped": true
+      }
+    ],
+    "scales": [
+      {
+        "maxSalary": 2325.0,
+        "maxMarginalRate": 0.0,
+        "deduction": 0.0,
+        "dependentDeduction": 0.0,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.0
+      },
+      {
+        "maxSalary": 3428.0,
+        "maxMarginalRate": 0.2362,
+        "deduction": 549.17,
+        "dependentDeduction": 42.86,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.076
+      },
+      {
+        "maxSalary": 3689.0,
+        "maxMarginalRate": 0.2594,
+        "deduction": 628.7,
+        "dependentDeduction": 42.86,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.089
+      },
+      {
+        "maxSalary": 6687.0,
+        "maxMarginalRate": 0.3072,
+        "deduction": 805.03,
+        "dependentDeduction": 42.86,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.187
+      },
+      {
+        "maxSalary": 20468.0,
+        "maxMarginalRate": 0.4244,
+        "deduction": 1588.75,
+        "dependentDeduction": 42.86,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": 0.347
+      },
+      {
+        "maxSalary": 999999.99,
+        "maxMarginalRate": 0.4717,
+        "deduction": 2556.89,
+        "dependentDeduction": 42.86,
+        "fixedDeduction": null,
+        "deductionCoefficient": null,
+        "effectiveRate": null
+      }
+    ]
+  }
+]

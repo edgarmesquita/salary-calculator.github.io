@@ -1,10 +1,10 @@
 import { Echelon, EchelonScale } from "@/models/echelon";
-import irs2023 from "@/data/irs-2023-2.json";
+import irs2025 from "@/data/irs-2025.json";
 
-export const getEchelon = (married: boolean, holders: number, dependents: number): Echelon | null | undefined => {
-  console.log(married, holders, dependents)
-  return irs2023.find(echelon => {
-    return echelon.status.some(stt => stt.married === married && stt.holders === holders && (
+export const getEchelon = (married: boolean, holders: number, dependents: number, handicapped: boolean): Echelon | null | undefined => {
+  console.log(married, holders, dependents, handicapped)
+  return irs2025.find(echelon => {
+    return echelon.status.some(stt => stt.married === married && stt.holders === holders && stt.handicapped === handicapped && (
       stt.dependents === dependents || (stt.dependents < dependents && stt.allowMoreDependents)
     ));
   }) as Echelon | null | undefined;
@@ -21,11 +21,18 @@ export const getScale = (echelon: Echelon, salary: number) => {
 
 export const getIrsDeductionAmount = (baseSalary: number, dependents: number, scale: EchelonScale | null): number | null => {
   if (scale) {
-    const maxMarginalRate = scale.maxMarginalRate / 100;
+    const maxMarginalRate = scale.maxMarginalRate;
     const dependentDeduction = scale.dependentDeduction ?? 0;
-    const deduction = scale.deductionCoefficient != null ? maxMarginalRate * scale.deductionCoefficient * (scale.deduction - baseSalary) : scale.deduction;
-    console.log(`${baseSalary} * ${maxMarginalRate} - ${deduction} - (${dependentDeduction} * ${dependents})`);
-    return baseSalary * maxMarginalRate - deduction - (dependentDeduction * dependents);
+    const deduction = scale.deductionCoefficient != null ? scale.deduction * scale.deductionCoefficient * (scale.fixedDeduction! - baseSalary) : scale.deduction;
+    let amount = (baseSalary * maxMarginalRate) - deduction - (dependentDeduction * dependents);
+
+    if(amount <= 0)
+      return null;
+
+    console.log('deduction', scale.deductionCoefficient != null ? `${scale.deduction} * ${scale.deductionCoefficient} * (${scale.fixedDeduction} - ${baseSalary})` : scale.deduction, `= ${deduction}`);
+    console.log('calc', `(${baseSalary} * ${maxMarginalRate}) - ${deduction} - (${dependentDeduction} * ${dependents})`, `= ${amount}`);
+
+    return amount;
   }
   return null;
 }

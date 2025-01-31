@@ -288,11 +288,12 @@ export default function HomePage() {
 
   const baseSalary = isNaN(values.baseSalary) ? 0 : values.baseSalary;
   const currStatus = status.find(stt => stt.id === values.statusId);
-  const echelon = currStatus ? getEchelon(currStatus.married, currStatus.holders, values.dependents) : null;
+  const echelon = currStatus ? getEchelon(currStatus.married, currStatus.holders, values.dependents, values.handicapped) : null;
   const scale = echelon ? getScale(echelon, baseSalary) : null;
   const allowanceSum = getTotalAllowance();
   const irsValue = getIrsDeductionAmount(baseSalary, values.dependents, scale);
   let irs = irsValue ? irsValue / baseSalary : null;
+
   if (irs && values.hasRnh && irs > .2) irs = .2;
 
   return (
@@ -301,7 +302,7 @@ export default function HomePage() {
         <Container maxWidth="md">
           <Toolbar disableGutters>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Calculadora de Salário
+              Calculadora de Salário 2025
             </Typography>
             <Button color="inherit" onClick={toggleDrawer(true)} endIcon={<SettingsIcon />}>Opções</Button>
           </Toolbar>
@@ -399,7 +400,6 @@ export default function HomePage() {
         </Box>
       </SwipeableDrawer>
       <Container maxWidth="md" sx={{ pt: 3 }}>
-        <Alert severity="warning">Atenção! O cálculo do IRS está a basear-se na nova <Link href="https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/tabela_ret_doclib/Documents/Tabelas_RF_Continente_2_Semestre_2023_Portal.xlsx" target="_blank">Tabela de Julho de 2023</Link>.</Alert>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs value={tab} onChange={handleTabChange} aria-label="tipos de contratos">
             <Tab label="Contrato" {...a11yProps(0)} />
@@ -610,7 +610,7 @@ export default function HomePage() {
                 <Typography variant='body2' sx={{ py: 1 }}>{(ss * 100).toFixed(2)}%</Typography>
               </Grid>
               <Grid xs={4} textAlign="right">
-                <Typography variant='body2' sx={{ py: 1 }}>{formatCurrency(baseSalary * ss)}</Typography>
+                <Typography variant='body2' sx={{ py: 1 }}>{formatCurrency(baseSalary * ss *-1)}</Typography>
               </Grid>
             </Grid>
 
@@ -633,7 +633,7 @@ export default function HomePage() {
                     <Typography variant='body2' component="div">Taxa efetiva: {(irs * 100).toFixed(2)}%</Typography>
                   </Grid>
                   <Grid xs={4} display="flex" alignItems="center" justifyContent="end">
-                    <Typography variant='body2'>{formatCurrency(baseSalary * irs)}</Typography>
+                    <Typography variant='body2'>{formatCurrency(baseSalary * irs * -1)}</Typography>
                   </Grid>
                 </Grid>
               </>
@@ -645,7 +645,7 @@ export default function HomePage() {
                 <Typography variant='subtitle2' component="div">Total de Descontos</Typography>
               </Grid>
               <Grid xs={4} display="flex" alignItems="center" justifyContent="end">
-                <Typography variant='body2'>{formatCurrency(getTotalDiscounts())}</Typography>
+                <Typography variant='body2'>{formatCurrency(getTotalDiscounts()*-1)}</Typography>
               </Grid>
             </Grid>
           </Card>

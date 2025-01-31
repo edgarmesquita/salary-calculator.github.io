@@ -18,6 +18,7 @@ export interface EchelonScale {
   maxMarginalRate: number;
   deduction: number;
   dependentDeduction?: number;
+  fixedDeduction?: number;
   deductionCoefficient?: number;
   effectiveRate?: number;
 }
